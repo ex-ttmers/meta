@@ -1,0 +1,60 @@
+title Avatar Builder Purchase/Save\n(Conceptual)
+
+Participant Avatar Builder as AB
+Participant Apangea as A
+
+
+AB->A: Purchase/Save Request
+Note over A
+    Verify student has enough points for purchase 
+    (pieces being worn but are not owned are being 
+    purchased).
+end note
+
+Note over AB
+    Please wait while your avatar is updated!
+
+
+    ... reticulating splines...
+end note
+
+alt All good, student has enough points. 
+    A->A: Purchase records made; student record \nupdated with owned piece details (color selection\nand whether the piece is being worn).*
+    A->AB: Updated points
+    AB->AB: Set pieces being worn that\nare not owned yet to owned;\nupdate point info.
+else Nope, didn't have enough points. No action was taken.
+    A->AB: Actual points
+    AB->AB: Reset avatar; update point info. **
+end
+
+
+Note right of AB
+    * This means that students can only store color 
+    selections for pieces that they own.
+end note
+
+Note right of AB
+    ** We haven't settled on a UX interaction for this 
+    yet, exactly. For MVP, 'reset avatar' means put the
+    avatar back into the state it was when it was last
+    saved.
+
+    We *could* do other things in the future (in order      
+    of difficulty):
+    - Keep changes except for purchases (remove 
+      'purchased' items from the avatar)
+    - Put the avatar builder in a mode where they only
+      see purchased items, and have to take them off 
+      until they are no longer in the red.
+
+    At this time, we think the most common case where 
+    this might happen is if the student is cheating,
+    in which case we don't care. We think there are
+    edge cases where this isn't true, but they'd be
+    extremely rare. We don't think that losing 
+    info since the last save is the worst thing in 
+    the world, since most of the time spent customizing
+    is playing. Actually picking end-state pieces
+    and colors once you know what you want is very 
+    quick, if a little bit less convenient.
+end note

@@ -1,0 +1,1 @@
+“Values and Expectations” should accompany job descriptions for each team member as a way of fostering team-specific working norms and encouraging individual accountability. Transparent values and expectations will provide a basis for delivering feedback to team members above and beyond regular job requirements.

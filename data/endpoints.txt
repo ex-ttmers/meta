@@ -1,0 +1,192 @@
+# Non-district related queries:
+# Live Teaching YTD
+/live_teaching?period=ytd
+
+# Live Teaching Hourly
+/live_teaching?period=hourly
+
+# For the following districts:
+
+# Point Leaderboard
+# For a state
+/point_leaders?state=OK&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Lesson Leaderboard
+# For a state
+/lesson_leaders?state=OK&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+###### Pinellas ######
+# Pinellas (Customer ID 1733)
+# Chicago - District 10 (District ID 1428)
+# Pinellas Park Middle School (School ID 15001)
+# Stang Period 7 (Classroom ID 338105)
+# (Enrollment ID 7904544)
+
+# Usage Report
+# Grouped by school
+# With Date Filters (window_start_date and end_date)
+# Only active students
+# (In other words, the DAR query)
+/usage_report?customer=1733&group=school&only_active=true&end_date=2015-07-05
+/usage_report?district=1428&group=school&only_active=true&end_date=2015-07-05
+
+# Usage Report
+# Grouped by school
+# YTD
+/usage_report?customer=1733&group=school
+/usage_report?district=1428&group=school
+
+# Overview Report
+# Grouped by School
+/overview_reports?customer=1733&group=school
+/overview_reports?district=1428&group=school
+
+# Overview Report
+# For a single school
+# Grouped by classroom
+/overview_reports?school=15001&group=classroom
+
+# Overview Report
+# For a single classroom
+# Grouped by student
+/overview_reports?classroom=338105&group=student
+
+# Overall Performance (Student Performance)
+# For the entire district
+/overall_performance?customer=1733&group=none
+/overall_performance?district=1428&group=none
+/overall_performance?school=15001&group=none
+/overall_performance?classroom=338105&group=none
+
+# Math Time
+# For the entire district
+/math_time?customer=1733&group=none
+/math_time?district=1428&group=none
+
+# Classroom Goal
+# For the entire district
+/classroom_giving?customer=1733
+
+# Charity
+# For the entire district
+/charities?customer=1733
+
+# Lesson Activity
+# For a single student
+/pathway_report?enrollment=7904544
+
+# Point Leaderboard
+# For a classroom
+
+/point_leaders?classroom=338105&rows_per_page=10&page=1&only_with_usage=true&group=student
+# Point Leaderboard
+
+# For a school
+/point_leaders?school=15001&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Lesson Leaderboard
+# For a classroom
+/lesson_leaders?classroom=338105&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Lesson Leaderboard
+# For a school
+/lesson_leaders?school=15001&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Admin standards report
+# For the district
+/admin_standards_report?customer=1733
+
+# Standards report
+# For a classroom
+/standards_report?classroom=338105&group=standard_and_student&use_common_core=true
+
+###### LACOE ######
+# LACOE - (Customer ID 123)
+# Houston ISD - (District ID 1644)
+# Central School (School ID 18100)
+# Eunsik Khang (Classroom ID 691061)
+# (Enrollment ID 11345257)
+
+# Usage Report
+# Grouped by school
+# With Date Filters (window_start_date and end_date)
+# Only active students
+# (In other words, the DAR query)
+/usage_report?customer=123&group=school&only_active=true&end_date=2015-07-05
+/usage_report?district=1644&group=school&only_active=true&end_date=2015-07-05
+/usage_report?district=565&group=school&only_active=true&end_date=2015-07-05
+
+# Usage Report
+# Grouped by school
+# YTD
+/usage_report?customer=123&group=school
+/usage_report?district=1644&group=school
+/usage_report?district=565&group=school
+
+# Overview Report
+# Grouped by School
+/overview_reports?customer=123&group=school
+/overview_reports?district=1644&group=school
+/overview_reports?district=565&group=school
+
+# Overview Report
+# For a single school
+# Grouped by classroom
+/overview_reports?school=18100&group=classroom
+
+# Overview Report
+# For a single classroom
+# Grouped by student
+/overview_reports?classroom=691061&group=student
+/overview_reports?classroom=691046&group=student
+
+# Overall Performance (Student Performance)
+# For the entire district
+/overall_performance?customer=123&group=none
+/overall_performance?district=1644&group=none
+/overall_performance?school=18100&group=none
+/overall_performance?classroom=691061&group=none
+/overall_performance?student=5824168&group=none
+/overall_performance?student=8568797&group=none
+/overall_performance?student=8806427&group=none
+
+# Math Time
+# For the entire district
+/math_time?customer=123&group=none
+/math_time?district=1644&group=none
+
+# Classroom Goal
+# For the entire district
+/classroom_giving?customer=123
+
+# Charity
+# For the entire district
+/charities?customer=123
+
+# Lesson Activity
+# For a single student
+/pathway_report?enrollment=11345257
+
+# Point Leaderboard
+# For a classroom
+/point_leaders?classroom=691061&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Point Leaderboard
+# For a school
+/point_leaders?school=18100&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Lesson Leaderboard
+# For a classroom
+/lesson_leaders?classroom=691061&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Lesson Leaderboard
+# For a school
+/lesson_leaders?school=18100&rows_per_page=10&page=1&only_with_usage=true&group=student
+
+# Admin standards report
+# For the district
+/admin_standards_report?customer=123
+
+# Standards report
+# For a classroom
+/standards_report?classroom=691061&group=standard_and_student&use_common_core=true

@@ -1,0 +1,35 @@
+title Avatar Builder Initialization\n(Conceptual)
+
+Participant Avatar Builder as AB
+Participant Apangea as A
+
+Note over AB
+    Hiyo! ^_^
+    I need to know some things, in no particular order...
+end note
+
+Note over A: Here they are, as they are ready!
+
+AB->+A: Spritesheet Locations
+A-->-AB: Here are the spritesheets.*
+AB->+A: Current User Info (points) 
+A-->-AB: Here is the current user info.
+AB->+A: What's in the store? 
+A-->-AB: Here's the store information. **
+AB->+A: Info about the current user's pieces\n(owned, wearing, color)
+A-->-AB: Here's the closet. **
+
+Note over AB: All of this info is loaded asynchronously as it arrives.
+
+Note over AB: * When the spritesheet locations arrive:
+loop Load each category's spritesheet asynchronously.
+    AB->+A: Spritesheet for <category>?
+    A-->-AB: Here it is!
+    Note over AB: Loads up the <category> images.
+end
+
+Note over AB
+    ** When I have both the store info and the user's
+    piece info, these are munged together and loaded 
+    as the main collection that drives me!
+end note

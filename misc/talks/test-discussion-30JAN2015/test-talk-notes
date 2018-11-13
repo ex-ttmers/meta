@@ -1,0 +1,57 @@
+Goals -
+1. Provide confidence to make changes
+  -> Don't want to test implementation
+  -> Least amount of tests that give you confidence
+
+2. Tests should be focused
+  -> Avoiding overtesting
+  -> Avoid testing at wrong layer
+
+3. Software tests should follow good coding principles
+
+4. Modular code
+
+5. Do assertions has_content? have auto-waiting?
+
+6. must_have -> add useful message as third parameter?
+  -> Use critical thinking - would it help?
+  -> No "Expected true, got false"
+  -> English-ify error messages
+
+7. ALWAYS BE PRAGMATIC / PRACTICAL!
+
+8. Note that wait_for_ajax only works if using the javascript driver
+
+9. Integration tests should test one action, which may or may not have multiple assertions
+
+10. If testing only models, use factory_girl's model - builds ruby
+  object but does not save to DB
+
+11. Minimize interactions with DB
+
+12. Test with fewer DB objects - do extra records give you more confidence?
+  -> If not, create fewer
+
+13. There can be lots of overhead when doing things via factory_girl
+
+14. Be wary when copy/pasting code
+  -> Use critical thinking
+
+15. 10 longest-running tests are captured and put in Jenkins
+  -> Look at test artifacts, 1/job, how long top 10 tok
+
+16. Understanding where things go?
+
+17. Test-first development means putting tests first, not
+  writing tests first specifically
+
+18. Remember that not all tests need to be committed!
+
+19. "Kill your darlings"
+  -> Writing advice
+
+20. !!! Change the code, make sure tests fail!
+  -> mutant
+
+
+** BILL POST LINK TO WIKI WITH INTERMITTENT FAILURES **

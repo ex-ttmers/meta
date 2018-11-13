@@ -1,0 +1,291 @@
+#!/usr/bin/env ruby
+
+require 'kramdown'
+
+class Tangela
+  def self.process
+    filenames = Dir['**/*.md']
+
+    files = filenames.map { |filename|
+      filename = File.expand_path(filename)
+      file_contents = read_file(filename)
+
+      toc_added = MarkdownProcessor.add_toc(file_contents)
+
+      document = MarkdownProcessor.parse(file_contents)
+      [filename, file_contents, document]
+    }
+
+    warn_links(files)
+  end
+
+  def self.warn_links(files)
+    link_db = LinkDB.new
+
+    link_db = files.reduce(link_db) { |db, file|
+      filename, file_contents, document = file
+
+      db = db.add_target(filename, nil)
+
+      links = LinkProcessor.extract_linkables(document)
+      links.reduce(db) { |db, link|
+        db.add_target(filename, link)
+      }
+    }
+
+    link_warnings = files.flat_map { |(filename, contents, document)|
+      LinkProcessor.validate_links(link_db, document, filename)
+    }.compact
+
+    link_warnings.each do |warning|
+      puts(warning)
+    end
+  end
+
+  def self.read_file(name)
+    input = File.read(name, nil, 0, encoding: Encoding::UTF_8)
+  end
+
+  def self.from_string(string)
+    MarkdownProcessor.add_toc(string)
+  end
+end
+
+class Mergable
+  def merge(new_vals={})
+    my_vars = instance_variables
+    new_instance = self.class.allocate
+
+    my_vars.each do |var|
+      new_instance.instance_variable_set(var, instance_variable_get(var))
+    end
+
+    new_vals.each do |var, val|
+      new_instance.instance_variable_set(var, val)
+    end
+
+    new_instance
+  end
+end
+
+class LinkDB < Mergable
+  def add_target(filename, href)
+    targets = @targets || []
+
+    merge(:@targets => targets + [{filename: filename, href: href}])
+  end
+
+  def for_file(filename)
+    @targets.select { |target|
+      target[:filename] == filename
+    }
+  end
+
+  def file_and_href?(filename, href)
+    @targets.find { |target|
+      target[:filename] == filename &&
+        target[:href]   == href
+    }
+  end
+end
+
+class LinkProcessor
+  def self.extract_linkables(document)
+    node = document.root
+    MarkdownProcessor.all_header_texts(node.children).map { |text|
+      Slugger.to_hrefable(text)
+    }
+  end
+
+  def self.validate_links(link_db, document, filename)
+    MarkdownProcessor.document_enumerator(document.root).
+      select { |elem| elem.type == :a }.
+      map { |a|
+        target = a.attr["href"]
+        lineno = a.options[:location]
+        warning_str = "[Warning in: #{filename}:#{lineno}]"
+
+        valid_status = validate_link(link_db, target, filename)
+
+        case valid_status
+        when :invalid
+          [warning_str,
+           "\tCould not validate link target:\n\t\t#{target}"]
+        when :skipped
+          [warning_str,
+           "\tNot validating: #{target}"]
+        end
+      }
+  end
+
+  def self.validate_link(link_db, target, current_filename)
+    if target =~/^http/
+    elsif target =~ /^#/
+      if link_db.file_and_href?(current_filename, target)
+        :valid
+      else
+        :invalid
+      end
+    elsif target =~ /#/
+      target_filename, target_href = target.split(/#/)
+      normalized_filename = normalize_filename(target_filename, current_filename)
+      if link_db.file_and_href?(normalized_filename, "##{target_href}")
+        :valid
+      else
+        :invalid
+      end
+    else
+    end
+  end
+
+  def self.normalize_filename(target_filename, current_filename)
+    root_signifier = /^\//
+
+    if target_filename =~ root_signifier
+      root_removed = current_filename.gsub(root_signifier, '')
+      File.expand_path(root_removed)
+    else
+      dirname = File.dirname(current_filename)
+      Dir.chdir(dirname) {
+        File.expand_path(target_filename)
+      }
+    end
+  end
+end
+
+class MarkdownProcessor
+  def self.parse(source_str)
+    Kramdown::Document.new(source_str)
+  end
+
+  def self.add_toc(source_str)
+    kramdown_doc = parse(source_str)
+
+    node = kramdown_doc.root, source_str
+
+    headers = all_headers(kramdown_doc.root.children)
+
+    if has_toc?(kramdown_doc.root)
+      toc = TOCGenerator.generate(headers)
+      source_str = source_str.gsub(/<toc>.*?<\/toc>/, "<toc>\n#{toc}\n</toc>")
+    end
+    source_str
+
+  end
+
+  def self.has_toc?(root)
+    document_enumerator(root).find { |elem|
+      elem.type == :html_element &&
+        elem.value == "toc"
+    }
+  end
+
+  def self.document_enumerator(node)
+    Enumerator.new do |yielder|
+      walk_node(node, yielder)
+    end
+  end
+
+  def self.all_headers(root_children)
+    root_children.select { |child| child.type == :header }
+  end
+
+  def self.all_header_texts(root_children)
+    all_headers(root_children).map { |h| h.options[:raw_text] }
+  end
+
+  def self.walk_node(node, yielder)
+    if Kramdown::Element === node
+      yielder << node
+      if node.children && node.children.length > 0
+        walk_children(node.children, yielder)
+      end
+    else
+      raise "UNKNOWN NODE #{node.inspect}"
+    end
+  end
+
+  def self.walk_children(children, yielder)
+    children.map do |child|
+      walk_node(child, yielder)
+    end
+  end
+end
+
+module TOCGenerator
+  def self.generate(headers)
+    toc_txt = headers.map { |header|
+      level = header.options[:level]
+      txt = header.options[:raw_text]
+      href = Slugger.to_hrefable(txt)
+      "#{'  ' * (level - 1)}- [#{txt}](#{href})"
+    }.join("\n")
+  end
+end
+
+module Slugger
+  def self.to_slug(string)
+    anchor = string.downcase
+    anchor = anchor.gsub(/[ ]/, '-')
+    anchor = anchor.gsub(/[~\/()\?]/, '')
+    anchor
+  end
+
+  def self.to_hrefable(title)
+    "##{to_slug(title)}"
+  end
+end
+
+def run_tests
+  require "minitest/autorun"
+  describe "tangeler" do
+    it "inserts a table of contents" do
+      output = Tangela.from_string <<-EOX
+<toc></toc>
+
+# This is a title
+fooo there! [foo](#this-is-a-title)
+
+- foo
+  - bar
+- baz
+  - buzz
+    - flux
+
+## subsection
+this one has a foo ahoy!
+foo everywhere
+      EOX
+      output.must_match %r{
+       .*-[ ]\[This[ ]is[ ]a[ ]title\]\(#this-is-a-title\)
+       .*\#[ ]This[ ]is[ ]a[ ]title
+       .*fooo[ ]there
+       .*\#\#[ ]subsection
+       .*ahoy
+      }xm
+    end
+  end
+
+  describe "Slugger.new.slug(str)" do
+    it "converts a bunch of cases" do
+      Slugger.to_slug("Scheduling Assistant View").must_equal "scheduling-assistant-view"
+      Slugger.to_slug("Hosting a Sprint Demo (or large meeting)").must_equal "hosting-a-sprint-demo-or-large-meeting"
+      Slugger.to_slug("Create/Evaluate Containers - Infinite Repeaters").must_equal "createevaluate-containers---infinite-repeaters"
+      Slugger.to_slug("~~Tell Active Record to ignore a column from its cache~~").must_equal "tell-active-record-to-ignore-a-column-from-its-cache"
+    end
+  end
+end
+
+def usage
+  puts "Options: --test, --help, --linkable"
+end
+
+case ARGV[0]
+when '--test' then
+  ARGV=[] #otherwise minitest/autorun will error
+  run_tests
+when '--help' then usage
+when '--linkable' then linkable
+else
+  Tangela.process
+end

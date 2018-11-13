@@ -1,0 +1,50 @@
+* Goals of Tests
+** Ensure That Program Meets Requirements (Validation)
+** Ensure That Program Works Correctly (Verification)
+** Determinism (no ND/intermittent failures!)
+** Performant Enough To Fit In Workflow
+** Flexible Enough To Allow Changes
+
+* Validation
+** Ensure tests are testing what they need to test
+** Ensure we are not testing unnecessary things
+** Remove/modify all tests with only negative assertions!
+
+* Verification
+** Are tests checking for a good variety of inputs?
+** Are we checking for too many?
+** Edge / Corner cases?
+
+* Determinism
+** Keep track of intermittent failures to look at
+** Do not use bare assertions (e.g. assert has_content?)
+** on page data - use must_have, wont_have
+** Do not use sleep, use wait_until_condition
+** Sleep is rarely ever necessary (One exception - CSS)
+** If you make an ajax call...
+** wait_for_ajax and/or wait_for_condition before assertions
+
+* Ensuring Performance
+** Removing unnecessary tests / variables / etc.
+** Favor unit tests for smaller focus tests
+** Combine tests if possible
+** Remove unnecessary tautological tests
+** Remove superfluous tests
+** Remove unnecessary logging / console output
+
+* How To Ensure Flexibility
+** Removing superfluous or tautological testing code / tests
+** DRYing up code
+** Move commonly-used selectors to helpers/custom_selectors
+** Move commonly-used functions to test_helper.rb
+** Using additional features, e.g. factories / traits
+** Favor let over instance vars (downside: lets are lazy)
+** Remove superfluous / old / outdated / unnecessary comments
+
+* When writing new tests
+** Always have at least one positive assertion
+** Check if similar tests are elsewhere
+** Check if helpers exist
+** Favor let over instance variables
+** Add generic functions to relevant helpers
+** Try running multiple times to suss out ND failures
